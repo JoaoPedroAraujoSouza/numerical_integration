@@ -159,18 +159,23 @@ class AppWindow(QWidget):
             n = int(self.n_input.text())
             method = self.method_combo.currentText().lower()
 
+            # Define the function dynamically using eval
             def func(x):
-                return eval(func_str, {"x": x, "np": np, "__builtins__": {}})
+                return eval(func_str,
+                            {"x": x, "np": np, "sen": np.sin, "cos": np.cos, "log": np.log, "builtins": {}})
 
+            # Choose the integration method
             if method == "trapezoidal":
                 result = trapezoidal_integrate(func, a, b, n)
             else:
                 result = simpson_integrate(func, a, b, n)
 
+            # Display the result
             self.result_label.setText(f"Result: {result:.6f}")
             self.last_result = (func_str, str(a), str(b), str(n), method, f"{result:.6f}")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error while calculating: {e}")
+
 
     def save_result(self):
         if not self.last_result:
